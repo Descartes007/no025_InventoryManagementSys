@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dao.ShangpinxinxiDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.entity.ShangpinxinxiEntity" id="shangpinxinxiMap">
+        <result property="zhanghao" column="zhanghao"/>
+        <result property="shangjia" column="shangjia"/>
+        <result property="shangpinmingcheng" column="shangpinmingcheng"/>
+        <result property="shangpinleixing" column="shangpinleixing"/>
+        <result property="shangpintupian" column="shangpintupian"/>
+        <result property="shangpinguige" column="shangpinguige"/>
+        <result property="shangpinshuliang" column="shangpinshuliang"/>
+        <result property="bianhao" column="bianhao"/>
+    </resultMap>
+
+	<select id="selectListVO"
+		resultType="com.entity.vo.ShangpinxinxiVO" >
+		SELECT * FROM shangpinxinxi  shangpinxinxi         
+        <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+	
+	<select id="selectVO"
+		resultType="com.entity.vo.ShangpinxinxiVO" >
+		SELECT  shangpinxinxi.* FROM shangpinxinxi  shangpinxinxi
+ 		<where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+
+    <select id="selectListView"
+		resultType="com.entity.view.ShangpinxinxiView" >
+
+		SELECT  shangpinxinxi.* FROM shangpinxinxi  shangpinxinxi 	        
+        <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+	
+	<select id="selectView"
+		resultType="com.entity.view.ShangpinxinxiView" >
+		SELECT * FROM shangpinxinxi  shangpinxinxi <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+
+	<select id="alarmDeadStock" resultType="com.entity.ShangpinxinxiEntity" >
+		select a.shangpinmingcheng from shangpinxinxi a, chukujilu b where a.shangpinmingcheng = b.shangpinmingcheng and b.chukushijian &lt;= DATE_SUB(NOW(), INTERVAL 3 DAY)
+	</select>
+	<select id="statistics" resultType="com.entity.ShangpinxinxiEntity" >
+		select shangpinmingcheng, sum(shangpinshuliang) as shangpinshuliang, '出库' as type, DATE_FORMAT(chukushijian,'%Y-%m') as statisticstime from chukujilu group by shangpinmingcheng, DATE_FORMAT(chukushijian,'%Y-%m')
+		UNION
+		select shangpinmingcheng, sum(shangpinshuliang) as shangpinshuliang, '入库' as type, DATE_FORMAT(rukushijian,'%Y-%m') as statisticstime from rukujilu group by shangpinmingcheng, DATE_FORMAT(rukushijian,'%Y-%m')
+	</select>
+
+</mapper>
